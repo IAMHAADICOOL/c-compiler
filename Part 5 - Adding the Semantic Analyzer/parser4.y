@@ -3,22 +3,7 @@
     #include<string.h>
     #include<stdlib.h>
     #include<ctype.h>
-    #include"lex.yy.c"
-    void yyerror(const char *s);
-    int yylex();
-    int yywrap();
-    void add(char);
-    void insert_type();
-    int search(char *);
-	void insert_type();
-	void print_tree(struct node*);
-	void print_inorder(struct node *);
-    void check_declaration(char *);
-	void check_return_type(char *);
-	int check_types(char *, char *);
-	char *get_type(char *);
-	struct node* mknode(struct node *left, struct node *right, char *token);
-
+    
     struct dataType {
         char * id_name;
         char * data_type;
@@ -42,6 +27,22 @@
 		struct node *right; 
 		char *token; 
 	};
+		char *yytext;
+
+    void yyerror(const char *s);
+    int yylex();
+    int yywrap();
+    void add(char);
+    void insert_type();
+    int search(char *);
+	void insert_type();
+	void print_tree(struct node*);
+	void print_inorder(struct node *);
+    void check_declaration(char *);
+	void check_return_type(char *);
+	int check_types(char *, char *);
+	char *get_type(char *);
+	struct node* mknode(struct node *left, struct node *right, char *token);
 
 %}
 
