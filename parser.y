@@ -49,6 +49,8 @@
 	int check_types(char *, char *);
 	char *get_type(char *);
 	struct node* mknode(struct node *left, struct node *right, char *token);
+	void generate_dot_file(struct node *root, FILE *out);
+	void export_tree_to_dot(struct node *root, const char *filename);
 
 %}
 
@@ -331,6 +333,10 @@ int main() {
 	printf("\n\n");
 	printf("\t\t\t\t\t\t\t\t PHASE 2: SYNTAX ANALYSIS \n\n");
 	print_tree(head); 
+
+	// Export parse tree to DOT file
+    export_tree_to_dot(head, "parse_tree.dot");
+
 	printf("\n\n\n\n");
 	printf("\t\t\t\t\t\t\t\t PHASE 3: SEMANTIC ANALYSIS \n\n");
 	if(sem_errors>0) {
@@ -476,7 +482,7 @@ struct node* mknode(struct node *left, struct node *right, char *token) {
 }
 
 void print_tree(struct node* tree) {
-	// print_tree_util(tree, 0);
+	print_tree_util(tree, 0);
 	printf("\n\nInorder traversal of the Parse Tree is: \n\n");
 	print_inorder(tree);
 }
@@ -495,7 +501,9 @@ void print_inorder(struct node *tree) {
 void print_tree_util(struct node *root, int space) {
     if(root == NULL)
         return;
-    space += 7;
+    space += 10;
+	// Print current node after space count
+    printf("\n");
     print_tree_util(root->right, space);
     for (int i = 7; i < space; i++)
         printf(" ");
@@ -509,4 +517,44 @@ void insert_type() {
 
 void yyerror(const char* msg) {
     fprintf(stderr, "%s\n", msg);
+}
+void generate_dot_file(struct node *root, FILE *out) {
+    if (root == NULL)
+        return;
+
+    // Print the current node
+    fprintf(out, "  \"%p\" [label=\"%s\"];\n", root, root->token);
+
+    // If the left child exists, print the edge and recursively call for the left child
+    if (root->left) {
+        fprintf(out, "  \"%p\" -> \"%p\";\n", root, root->left);
+        generate_dot_file(root->left, out);
+    }
+
+    // If the right child exists, print the edge and recursively call for the right child
+    if (root->right) {
+        fprintf(out, "  \"%p\" -> \"%p\";\n", root, root->right);
+        generate_dot_file(root->right, out);
+    }
+}
+
+void export_tree_to_dot(struct node *root, const char *filename) {
+    FILE *out = fopen(filename, "w");
+    if (!out) {
+        perror("Failed to open file");
+        return;
+    }
+
+    // Start the DOT graph
+    fprintf(out, "digraph ParseTree {\n");
+    fprintf(out, "  node [shape=ellipse];\n");
+
+    // Generate the DOT content from the tree
+    generate_dot_file(root, out);
+
+    // End the DOT graph
+    fprintf(out, "}\n");
+
+    fclose(out);
+    printf("DOT file generated: %s\n", filename);
 }
