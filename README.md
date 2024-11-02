@@ -15,11 +15,14 @@ cc lex.yy.c y.tab.c
 ./a.out<input1.c
 ```
 ## Install graphviz
+```
 sudo apt install graphviz
+```
 
 ## Visualise the parse tree
+```
 dot -Tpng parse_tree.dot -o parse_tree.png
-
+```
 ## What is LEX?
 
 LEX is a tool used to generate a lexical analyzer. The input is a set of regular expressions in addition to actions. The output is a table driven scanner called lex.yy.c.
